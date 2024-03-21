@@ -6,8 +6,12 @@
   "author": "Kazuki Minakawa <kazuki.minakawa@funlab.jp>",
   "license": "MIT",
   "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "build": "tsc"
+  },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/koa": "^2.15.0",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
@@ -19,5 +23,8 @@
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "koa": "^2.15.2"
   }
 }
