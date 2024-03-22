@@ -6,7 +6,15 @@
       "tsconfig": "tsconfig.json",
       "problemMatcher": ["$tsc"],
       "group": "build",
-      "label": "tsc: build"
+      "label": "tsc: build",
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     }
   ]
 }
