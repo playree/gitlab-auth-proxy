@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import Koa from 'koa'
+import urljoin from 'url-join'
 
 import { koaProxies } from './koa-proxies'
 
@@ -40,16 +41,19 @@ const app = new Koa()
 // )
 conf.proxies.forEach((pc) => {
   app.use(
-    koaProxies(`/${pc.label}${URL_ACCESS_TOKEN_PREFIX}:token${URL_SEPARATOR}`, (params, ctx) => {
+    koaProxies(`/${pc.label}${URL_ACCESS_TOKEN_PREFIX}:token${URL_SEPARATOR}`, (params) => {
+      console.log('params:', params)
       return {
         target: pc.target,
         changeOrigin: true,
         rewrite: (path) => {
-          return path
+          return path.substring(path.indexOf(URL_SEPARATOR) + URL_SEPARATOR.length)
         },
         logs: true,
-        filter: async (pctx) => {
-          const gitlabRes = await fetch()
+        filter: async () => {
+          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version', `?private_token=${params.token}`)
+          const res = await fetch(gitlabApiVersionUrl)
+          return res.ok
         },
       }
     }),

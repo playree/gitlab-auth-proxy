@@ -623,6 +623,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/url-join@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "@types/url-join@npm:4.0.3"
+  checksum: 10c0/7f0f86693070355ce731ec3861d47c03eaae09ab0ea1a72dde6b38a2a17089941acc59bac9ea2472376b6f96e189478da0a7ed29e2d282d1543382e92408d6ca
+  languageName: node
+  linkType: hard
+
 "@types/uuid@npm:^9":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
@@ -2011,6 +2018,7 @@ __metadata:
     "@types/http-proxy": "npm:^1"
     "@types/koa": "npm:^2.15.0"
     "@types/node": "npm:^20.11.30"
+    "@types/url-join": "npm:^4.0.3"
     "@types/uuid": "npm:^9"
     "@typescript-eslint/eslint-plugin": "npm:^7.3.1"
     "@typescript-eslint/parser": "npm:^7.3.1"
@@ -2025,6 +2033,7 @@ __metadata:
     prettier: "npm:^3.2.5"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.3"
+    url-join: "npm:4.0.1"
     uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
@@ -4052,6 +4061,13 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10c0/4ef57b45aa820d7ac6496e9208559986c665e49447cb072744c13b66925a362d96dd5a46c4530a6b8e203e5db5fe849369444440cb22ecfc26c679359e5dfa3c
+  languageName: node
+  linkType: hard
+
+"url-join@npm:4.0.1":
+  version: 4.0.1
+  resolution: "url-join@npm:4.0.1"
+  checksum: 10c0/ac65e2c7c562d7b49b68edddcf55385d3e922bc1dd5d90419ea40b53b6de1607d1e45ceb71efb9d60da02c681d13c6cb3a1aa8b13fc0c989dfc219df97ee992d
   languageName: node
   linkType: hard
 
