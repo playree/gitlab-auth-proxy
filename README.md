@@ -5,7 +5,7 @@ GitLabの認証をチェックしてからProxy(転送)することができま�
 
 オンプレミスのGitLab用に用意したPlantUMLサーバーを、GitLabユーザーのみが利用可能なように制限したくて作ったものになります。
 
-下記GitLabの手順通りPlantUMLサーバーを用意すると、PlantUMLサーバー自体は誰でもアクセス可能な状態となってしまうので。
+下記GitLabの手順通りPlantUMLサーバーを用意すると、PlantUMLサーバー自体は誰でもアクセス可能な状態となってしまうので。\
 https://docs.gitlab.com/ee/administration/integration/plantuml.html
 
 - [GitLab Auth Proxy](#gitlab-auth-proxy)
@@ -66,6 +66,15 @@ yarn build
 - `proxies / target`\
   プロキシ(転送)先を指定します。
 
+`http://localhost:3000/{label}/-/`
+にアクセスすることで`target`にプロキシ(転送)されます。\
+この場合、GitLabの認証にはセッションCookieが利用されます。
+
+ブラウザ外から使う場合など、GitLabで払い出したPersonal Access Tokenを指定して利用することもできます。\
+その場合は、
+`http://localhost:3000/{label}/tkn/{Personal Access Token}/-/`
+のように指定してください。
+
 ### サンプル設定
 
 上記サンプルの場合、本モジュールはポート3000で待ち受けるように起動し、
@@ -101,9 +110,10 @@ GitLabのセッションCookieまたは、指定したPersonal Access Tokenが�
 基本的に下記手順で用意する場合。\
 https://docs.gitlab.com/ee/administration/integration/plantuml.html
 
-1. GitLabはポート80で起動中。
-2. PlantUMLサーバーをポート8081で起動。(Dockerなどで)
-3. 本プロキシを下記設定で起動。
+1. GitLabは`https://gitlab.sample.dev`で運用中。
+2. GitLabはポート80で起動中。
+3. PlantUMLサーバーをポート8081で起動。(Dockerなどで)
+4. 本プロキシを下記設定で起動。
     ```json
     {
       "port": 3000,
@@ -116,8 +126,9 @@ https://docs.gitlab.com/ee/administration/integration/plantuml.html
       ]
     }
     ```
-4. GitLabのNginx設定に下記を追加\
-   GitLabのNginxで受けた`/-/plantuml/`のアクセスを本プロキシに転送する設定。
+5. GitLabのNginx設定に下記を追加\
+   GitLabのNginxで受けた`/-/plantuml/xxxx`のアクセスを\
+   本プロキシに(`/plantuml/xxxx`として)転送する設定。
     ```conf
     location /-/plantuml/ { 
       rewrite ^/-/plantuml/(.*) /plantuml/$1 break;
@@ -125,4 +136,16 @@ https://docs.gitlab.com/ee/administration/integration/plantuml.html
       proxy_pass http://localhost:3000/;
     }
     ```
-5. 本プロキシは`/plantuml/`で受けた内容を、GitLabの認証をチェックしてからPlantUMLサーバーに転送する。
+6. GitLabのPlantUML URLの設定に`https://gitlab.sample.dev/-/plantuml/-/`を設定する
+7. PlantUMLサーバーをVSCodeなど(ブラウザ以外)から使いたい場合、GitLabでPersonal Access Token(glpat-XXXX)を発行し、\
+   `https://gitlab.sample.dev/-/plantuml/tkn/glpat-XXXX/-/`のように指定する。
+
+転送の流れは下記のようになる。
+
+`https://gitlab.sample.dev/-/plantuml/-/xxxx`\
+　↓\
+`http://localhost/-/plantuml/-/xxxx`\
+　↓　本プロキシに転送\
+`http://localhost:3000/plantuml/-/xxxx`\
+　↓　PlantUMLサーバーに転送。※ここでGitLabの認証チェック\
+`http://localhost:8081/xxxx`
