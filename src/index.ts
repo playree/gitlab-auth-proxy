@@ -15,6 +15,8 @@ type Conf = {
 
 const URL_ACCESS_TOKEN_PREFIX = '/tkn/'
 const URL_SEPARATOR = '/-/'
+const GITLAB_SESSION_COOKIE = '_gitlab_session'
+const GITLAB_VERSION_API = '/api/v4/version'
 
 const confPath = process.argv.length > 2 ? process.argv[2] : './conf.json'
 
@@ -47,7 +49,7 @@ conf.proxies.forEach((pc) => {
         },
         logs: true,
         filter: async () => {
-          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version', `?private_token=${params.token}`)
+          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, GITLAB_VERSION_API, `?private_token=${params.token}`)
           const res = await fetch(gitlabApiVersionUrl)
           return res.ok
         },
@@ -66,12 +68,12 @@ conf.proxies.forEach((pc) => {
         },
         logs: true,
         filter: async () => {
-          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version')
-          const gitlabSession = getCookie('_gitlab_session', ctx)
+          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, GITLAB_VERSION_API)
+          const gitlabSession = getCookie(GITLAB_SESSION_COOKIE, ctx)
           if (gitlabSession) {
             const res = await fetch(gitlabApiVersionUrl, {
               headers: {
-                Cookie: `_gitlab_session=${gitlabSession}`,
+                Cookie: `${GITLAB_SESSION_COOKIE}=${gitlabSession}`,
               },
             })
             return res.ok
