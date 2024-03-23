@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import Koa from 'koa'
+import { parseCookie } from 'koa-cookies'
 import urljoin from 'url-join'
 
 import { koaProxies } from './koa-proxies'
@@ -45,7 +46,7 @@ conf.proxies.forEach((pc) => {
 
   // use _gitlab_session Cookie
   app.use(
-    koaProxies(`/${pc.label}${URL_SEPARATOR}`, () => {
+    koaProxies(`/${pc.label}${URL_SEPARATOR}`, (_, ctx) => {
       return {
         target: pc.target,
         changeOrigin: true,
@@ -55,8 +56,16 @@ conf.proxies.forEach((pc) => {
         logs: true,
         filter: async () => {
           const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version')
-          const res = await fetch(gitlabApiVersionUrl)
-          return res.ok
+          const gitlabSession = await parseCookie('_gitlab_session')(ctx)
+          if (gitlabSession) {
+            const res = await fetch(gitlabApiVersionUrl, {
+              headers: {
+                Cookie: `_gitlab_session=${gitlabSession}`,
+              },
+            })
+            return res.ok
+          }
+          return false
         },
       }
     }),
