@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs'
 import Koa from 'koa'
-import { parseCookie } from 'koa-cookies'
 import urljoin from 'url-join'
 
 import { koaProxies } from './koa-proxies'
@@ -18,6 +17,18 @@ const URL_ACCESS_TOKEN_PREFIX = '/tkn/'
 const URL_SEPARATOR = '/-/'
 
 const confPath = process.argv.length > 2 ? process.argv[2] : './conf.json'
+
+const getCookie = (key: string, ctx: Koa.Context) => {
+  if (ctx.request.header.cookie) {
+    const cookies = ctx.request.header.cookie.split(';')
+    for (const cookie of cookies) {
+      if (cookie.indexOf(`${key}=`)) {
+        return cookie.substring(cookie.indexOf('=') + 1)
+      }
+    }
+  }
+  return null
+}
 
 const conf: Conf = JSON.parse(readFileSync(confPath).toString())
 console.debug('conf:', conf)
@@ -56,7 +67,8 @@ conf.proxies.forEach((pc) => {
         logs: true,
         filter: async () => {
           const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version')
-          const gitlabSession = await parseCookie('_gitlab_session')(ctx)
+          const gitlabSession = getCookie('_gitlab_session', ctx)
+          console.log('gitlabSession:', gitlabSession)
           if (gitlabSession) {
             const res = await fetch(gitlabApiVersionUrl, {
               headers: {
