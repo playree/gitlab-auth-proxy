@@ -16,10 +16,7 @@ type Conf = {
 const URL_ACCESS_TOKEN_PREFIX = '/tkn/'
 const URL_SEPARATOR = '/-/'
 
-if (process.argv.length < 3) {
-  console.error('Please specify the configuration file as an argument')
-}
-const confPath = process.argv[2]
+const confPath = process.argv.length > 2 ? process.argv[2] : './conf.json'
 
 const conf: Conf = JSON.parse(readFileSync(confPath).toString())
 console.debug('conf:', conf)

@@ -1,0 +1,10 @@
+{
+  "port": 3000,
+  "gitlabUrl": "https://gitlab.sample.dev/",
+  "proxies": [
+    {
+      "label": "plantuml",
+      "target": "http://localhost:8081"
+    }
+  ]
+}
