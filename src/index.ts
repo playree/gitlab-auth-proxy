@@ -25,24 +25,11 @@ const conf: Conf = JSON.parse(readFileSync(confPath).toString())
 console.debug('conf:', conf)
 
 const app = new Koa()
-// app.use(
-//   koaProxies('/octocat/:name', (params, ctx) => {
-//     console.log('@@@', params.name)
-//     return {
-//       target: 'https://api.github.com/',
-//       changeOrigin: true,
-//       rewrite: () => `/users/${params.name}`,
-//       logs: true,
-//       filter: async (pctx) => {
-//         return params.name === 'vagusX'
-//       },
-//     }
-//   }),
-// )
+
 conf.proxies.forEach((pc) => {
+  // use Personal Access Token
   app.use(
     koaProxies(`/${pc.label}${URL_ACCESS_TOKEN_PREFIX}:token${URL_SEPARATOR}`, (params) => {
-      console.log('params:', params)
       return {
         target: pc.target,
         changeOrigin: true,
@@ -58,5 +45,26 @@ conf.proxies.forEach((pc) => {
       }
     }),
   )
+
+  // use _gitlab_session Cookie
+  app.use(
+    koaProxies(`/${pc.label}${URL_SEPARATOR}`, () => {
+      return {
+        target: pc.target,
+        changeOrigin: true,
+        rewrite: (path) => {
+          return path.substring(path.indexOf(URL_SEPARATOR) + URL_SEPARATOR.length)
+        },
+        logs: true,
+        filter: async () => {
+          const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version')
+          const res = await fetch(gitlabApiVersionUrl)
+          return res.ok
+        },
+      }
+    }),
+  )
 })
-app.listen(3000)
+
+console.log(`Listen Port: ${conf.port}`)
+app.listen(conf.port)
