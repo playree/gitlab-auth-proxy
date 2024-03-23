@@ -68,7 +68,6 @@ conf.proxies.forEach((pc) => {
         filter: async () => {
           const gitlabApiVersionUrl = urljoin(conf.gitlabUrl, '/api/v4/version')
           const gitlabSession = getCookie('_gitlab_session', ctx)
-          console.log('gitlabSession:', gitlabSession)
           if (gitlabSession) {
             const res = await fetch(gitlabApiVersionUrl, {
               headers: {
