@@ -22,7 +22,7 @@ const getCookie = (key: string, ctx: Koa.Context) => {
   if (ctx.request.header.cookie) {
     const cookies = ctx.request.header.cookie.split(';')
     for (const cookie of cookies) {
-      if (cookie.indexOf(`${key}=`)) {
+      if (cookie.indexOf(`${key}=`) > -1) {
         return cookie.substring(cookie.indexOf('=') + 1)
       }
     }
